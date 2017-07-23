@@ -10,7 +10,21 @@ import java.util.Iterator;
  */
 public interface AlertService {
 
+    /**
+     * Handles all logic related to posting an Alert
+     * Validates Alert object
+     * Sets current time as date created
+     * If Validated, Inserts into database with new generated id automatically
+     * @param alert - RequestBody alert
+     * @return
+     * @throws IllegalAlertArgumentsException
+     */
     Alert postAlert(Alert alert) throws IllegalAlertArgumentsException;
 
+    /**
+     * Handles all logic related to getting list of all alerts
+     * Uses lambda expressions to filter the list of alerts based on delay threshold
+     * @return
+     */
     Iterable<Alert> getAlerts();
 }

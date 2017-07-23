@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by plank-hari.s on 7/23/2017.
@@ -36,8 +39,16 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Iterable<Alert> getAlerts() {
-        //TODO: Implement logic to filter out alerts which are still in the delay threshold
-        //TODO: return filtered list
-        return alertRepository.findAll();
+        //Get all allerts from database
+        List<Alert> alertsFromDb = (List<Alert>) alertRepository.findAll();
+
+        long currentTime = new Date().getTime();
+        //Using Lambda, extract alerts which have crossed the delay threshold.
+        List<Alert> alertsCrossingDelayThreshold = alertsFromDb
+                .stream()
+                .filter(a -> currentTime > (a.getDateCreated().getTime() + TimeUnit.SECONDS.toMillis(a.getDelay())))
+                .collect(Collectors.toList());
+
+        return alertsCrossingDelayThreshold;
     }
 }

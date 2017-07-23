@@ -1,21 +1,26 @@
 package life.dev.hari.alertChallenge.controller;
 
 import life.dev.hari.alertChallenge.WebIntegrationTestBase;
+import life.dev.hari.alertChallenge.builder.AlertBuilder;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.repository.AlertRepository;
 import life.dev.hari.alertChallenge.utilities.JsonDeserializer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by plank-hari.s on 7/23/2017.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@Transactional
 public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
 
     public static final String ALERTS_URL_PATH = "/alerts";
@@ -126,23 +133,62 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
                 .andReturn().getResponse();
         logger.debug("Returned list of alerts: " + mockHttpServletResponse.getContentAsString());
 
+        //Validation
         List<Alert> alerts = deserializeAlertsJson(mockHttpServletResponse.getContentAsString());
         Assert.isTrue(alerts.size() == 0);
     }
 
     @Test
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void getAlertsMustReturnOnlyAlertsWhichHaveCrossedTheDelayThreshold() throws Exception {
-        //Get alerts should succeed and return
-        //* List of alerts which have crossed the delay threshold
+        //Create alerts with different delay periods.
+        Alert alertNotCrossingDelayThreshold = AlertBuilder
+                .createAlert()
+                .setDate(new Date())
+                .setDelay(100000)
+                .setDescription("Lazy alert, will take time to process, list this later.")
+                .setReferenceId("reference_id_03").getAlert();
 
-        //TODO: Register various alerts with different delays
+        Alert alertNotCrossingDelayThreshold2 = AlertBuilder
+                .createAlert()
+                .setDate(new Date())
+                .setDelay(10000)
+                .setDescription("Lazy alert, will take time to process, list this later.")
+                .setReferenceId("reference_id_04").getAlert();
+
+        Alert alertNotCrossingDelayThreshold3 = AlertBuilder
+                .createAlert()
+                .setDate(new Date())
+                .setDelay(100000)
+                .setDescription("Lazy alert, will take time to process, list this later.")
+                .setReferenceId("reference_id_05").getAlert();
+
+        Alert validListingAlert = AlertBuilder
+                .createAlert()
+                .setDelay(0)
+                .setDate(new Date())
+                .setDescription("High priority alert, list this immediately, list this later.")
+                .setReferenceId("reference_id_02")
+                .getAlert();
+
+        //Save alerts into database
+        alertRepository.save(alertNotCrossingDelayThreshold);
+        alertRepository.save(alertNotCrossingDelayThreshold2);
+        alertRepository.save(alertNotCrossingDelayThreshold3);
+        alertRepository.save(validListingAlert);
+
         mockHttpServletResponse = this.mockMvc
                 .perform(get(ALERTS_URL_PATH))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         logger.debug("Returned list of alerts: " + mockHttpServletResponse.getContentAsString());
 
-        //TODO: Assert only alerts crossing the delay threshold are returned
+        //Validation
+        List<Alert> alerts = deserializeAlertsJson(mockHttpServletResponse.getContentAsString());
+        Assert.isTrue(!alerts.contains(alertNotCrossingDelayThreshold));
+        Assert.isTrue(!alerts.contains(alertNotCrossingDelayThreshold2));
+        Assert.isTrue(!alerts.contains(alertNotCrossingDelayThreshold3));
+        Assert.isTrue(alerts.contains(validListingAlert));
     }
 
 
