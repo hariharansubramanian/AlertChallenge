@@ -12,11 +12,32 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'idea'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
+apply plugin: 'maven'
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
+task copyYamlFiles(type: Copy) {
+	fileTree('build/libs')
+	from 'src/main/resources/application.yml'
+	into 'build/libs/'
+}
+
+jar {
+	baseName = 'alertsChallenge'
+	version = '0.0.1-SNAPSHOT'
+}
+
+jar.dependsOn copyYamlFiles
+
+
+configurations {
+	compile.exclude module: "spring-boot-starter-tomcat"
+}
 
 repositories {
 	mavenCentral()
@@ -28,6 +49,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	compile("org.springframework.boot:spring-boot-starter-undertow")
 	compile("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
 	compile("com.fasterxml.jackson.core:jackson-core:2.7.5")
 	compile("com.fasterxml.jackson.core:jackson-annotations:2.7.5")
