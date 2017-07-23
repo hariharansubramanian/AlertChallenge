@@ -36,4 +36,16 @@ public class AlertController {
     public Alert postAlert(@RequestBody Alert alert) throws IllegalAlertArgumentsException, DuplicateAlertException, IllegalAlertArgumentsException {
         return alertService.postAlert(alert);
     }
+
+    /**
+     * Gets a list of all alerts from the database
+     * Alerts which are still under the delay threshold are NOT returned in the list.
+     * @return - Returns 200 with the list of all alerts in the database not crossing the delay threshold.
+     */
+    @RequestMapping(method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Alert> getAlerts() {
+        return alertService.getAlerts();
+    }
 }

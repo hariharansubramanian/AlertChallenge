@@ -33,4 +33,11 @@ public class AlertServiceImpl implements AlertService {
             alertRepository.save(alert);
             return alert;
     }
+
+    @Override
+    public Iterable<Alert> getAlerts() {
+        //TODO: Implement logic to filter out alerts which are still in the delay threshold
+        //TODO: return filtered list
+        return alertRepository.findAll();
+    }
 }
