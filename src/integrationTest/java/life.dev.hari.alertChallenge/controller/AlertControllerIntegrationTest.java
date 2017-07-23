@@ -1,10 +1,9 @@
 package life.dev.hari.alertChallenge.controller;
 
 import life.dev.hari.alertChallenge.WebIntegrationTestBase;
-import life.dev.hari.alertChallenge.model.Alert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.Assert;
 
 /**
  * Created by plank-hari.s on 7/23/2017.
@@ -18,8 +17,31 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
 
 
     @Test
-    public void dummyTest() throws Exception {
-        Alert alert = null;
-        Assert.isNull(alert);
+    public void postAlertMustReturnBadRequestForNullReferenceId() throws Exception {
+        Assert.fail();
+    }
+
+
+    @Test
+    public void postAlertMustReturnBadRequestForNullDelay() throws Exception {
+        Assert.fail();
+    }
+
+
+    @Test
+    public void postAlertMustReturnBadRequestForNullDescription() throws Exception {
+        Assert.fail();
+    }
+
+
+    @Test
+    public void postAlertMustReturnBadRequestIfAlertAlreadyExists() throws Exception {
+        Assert.fail();
+    }
+
+
+    @Test
+    public void postAlertMustReturnCreatedForAValidAlert() throws Exception {
+        Assert.fail();
     }
 }
