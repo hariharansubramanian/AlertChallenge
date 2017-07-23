@@ -1,5 +1,6 @@
 package life.dev.hari.alertChallenge.validator;
 
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.repository.AlertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class AlertValidator {
 
         Alert alertFromDb = alertRepository.findByReferenceId(alert.getReferenceId());
         if (alertFromDb != null) {
-            throw new IllegalArgumentException(ALERT_ALREADY_EXISTS_IN_DATABASE);
+            throw new DuplicateAlertException(ALERT_ALREADY_EXISTS_IN_DATABASE);
         }
     }
 }
