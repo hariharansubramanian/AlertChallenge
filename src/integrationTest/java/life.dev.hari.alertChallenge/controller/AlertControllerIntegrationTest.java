@@ -6,12 +6,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 
 import java.nio.file.Files;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
 
     public static final String ALERTS_URL_PATH = "/alerts";
+    Logger logger = LoggerFactory.getLogger(AlertControllerIntegrationTest.class);
 
     @Autowired
     AlertRepository alertRepository;
@@ -115,4 +119,33 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
                 .andExpect(status().isCreated())
                 .andReturn();
     }
+
+    /**
+     * GET /alerts test cases
+     */
+    @Test
+    public void getAlertsMustReturnEmptyArrayWhenNoAlertsPosted() throws Exception {
+        //Get alerts should succeed and return
+        mockHttpServletResponse = this.mockMvc
+                .perform(get(ALERTS_URL_PATH))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        logger.debug("Returned list of alerts: "+ mockHttpServletResponse.getContentAsString());
+    }
+
+    @Test
+    public void getAlertsMustReturnOnlyAlertsWhichHaveCrossedTheDelayThreshold() throws Exception {
+        //Get alerts should succeed and return
+            //* List of alerts which have crossed the delay threshold
+
+        //TODO: Register various alerts with different delays
+        mockHttpServletResponse = this.mockMvc
+                .perform(get(ALERTS_URL_PATH))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        logger.debug("Returned list of alerts: "+ mockHttpServletResponse.getContentAsString());
+
+        //TODO: Assert only alerts crossing the delay threshold are returned
+    }
+
 }

@@ -66,4 +66,14 @@ public class Alert extends AbstractEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "Alert{" +
+                "dateCreated=" + dateCreated +
+                ", referenceId='" + referenceId + '\'' +
+                ", delay=" + delay +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
