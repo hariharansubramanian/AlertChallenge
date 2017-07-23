@@ -1,5 +1,6 @@
 package life.dev.hari.alertChallenge.controller.myraRestException.exceptionHandler;
 
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
@@ -21,12 +22,15 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by plank-hari.s on 7/24/2017.
- * The abstract class for all entity classes. This provides the unique id to
- * identify a row in the SQL db.
+ * Exception handler class that catches exceptions raised elsewhere and
+ * translates them into appropriate HTTP response codes
  */
 
 @ControllerAdvice
 public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHandler {
+
+    public static final String ERROR_POST_MISSING_OR_CORRUPTED_DATA = "Error posting an alert with missing or corrupted data";
+    public static final String ERROR_POST_DUPLICATE_ALERT_DATA = "Alert with this reference id already exists.";
 
     public MyraRestExceptionHandlingAdviser() {
         super();
@@ -44,7 +48,8 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
             NoSuchAlgorithmException.class,
             KeyStoreException.class,
             IOException.class,
-            DuplicateAlertException.class
+            DuplicateAlertException.class,
+            IllegalAlertArgumentsException.class
     })
 
     public final ResponseEntity<Object> handleMyraRestException(Exception ex, WebRequest request) {
@@ -64,6 +69,11 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
         } else if (ex instanceof DuplicateAlertException) {
             HttpStatus status = HttpStatus.BAD_REQUEST;
             return handleDuplicateAlertException((DuplicateAlertException) ex,
+                    headers, status, request);
+
+        }else if (ex instanceof IllegalAlertArgumentsException) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            return handleIllegalAlertArgumentsException((IllegalAlertArgumentsException) ex,
                     headers, status, request);
 
         } else if (ex instanceof EntityNotFoundException) {
@@ -129,8 +139,25 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
     private ResponseEntity<Object> handleDuplicateAlertException(final DuplicateAlertException ex,
                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorResponse bodyOfResponse = new ErrorResponse()
-                .setErrorTitle("Alert with this reference id already exists.")
-                .setException(ex);
+                .setErrorTitle(ERROR_POST_DUPLICATE_ALERT_DATA)
+                .setException(ex)
+                .setHttpStatus(400);
+        return handleExceptionInternal(ex, bodyOfResponse, headers, status, request);
+    }
+
+    /**
+     * Custom Error method which handles null or incomplete Alert data from being posted into the system
+     * returns 400 BAD_REQUEST.
+     * @return Custom Response Entitiy Object
+     * Response Error Title: "Error posting an alert with missing or corrupted data"
+     * Response Error Status code: 400 BAD_REQUEST
+     */
+    private ResponseEntity<Object> handleIllegalAlertArgumentsException(final IllegalAlertArgumentsException ex,
+                                                                 HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorResponse bodyOfResponse = new ErrorResponse()
+                .setErrorTitle(ERROR_POST_MISSING_OR_CORRUPTED_DATA)
+                .setException(ex)
+                .setHttpStatus(400);
         return handleExceptionInternal(ex, bodyOfResponse, headers, status, request);
     }
 

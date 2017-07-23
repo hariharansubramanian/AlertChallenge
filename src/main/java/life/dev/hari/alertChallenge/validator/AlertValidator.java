@@ -1,6 +1,7 @@
 package life.dev.hari.alertChallenge.validator;
 
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.repository.AlertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,12 @@ public class AlertValidator {
     @Autowired
     AlertRepository alertRepository;
 
-    public void validateAlert(Alert alert) {
+    public void validateAlert(Alert alert) throws IllegalAlertArgumentsException,DuplicateAlertException {
         if (alert == null ||
                 alert.getReferenceId() == null ||
                 alert.getDelay() == null ||
                 alert.getDescription() == null) {
-            throw new IllegalArgumentException(INVALID_ALERT_POSTED);
+            throw new IllegalAlertArgumentsException(INVALID_ALERT_POSTED);
         }
 
         Alert alertFromDb = alertRepository.findByReferenceId(alert.getReferenceId());

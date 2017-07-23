@@ -1,6 +1,7 @@
 package life.dev.hari.alertChallenge.controller;
 
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.service.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class AlertController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public Alert postAlert(@RequestBody Alert alert) throws IllegalArgumentException,DuplicateAlertException {
+    public Alert postAlert(@RequestBody Alert alert) throws IllegalAlertArgumentsException, DuplicateAlertException, IllegalAlertArgumentsException {
         return alertService.postAlert(alert);
     }
 }

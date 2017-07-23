@@ -1,5 +1,7 @@
 package life.dev.hari.alertChallenge.service.ServiceImpl;
 
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.repository.AlertRepository;
 import life.dev.hari.alertChallenge.service.AlertService;
@@ -25,7 +27,7 @@ public class AlertServiceImpl implements AlertService {
     private AlertRepository alertRepository;
 
     @Override
-    public Alert postAlert(Alert alert) {
+    public Alert postAlert(Alert alert) throws IllegalAlertArgumentsException,DuplicateAlertException{
             alertValidator.validateAlert(alert);
             alert.setDateCreated(new Date());
             alertRepository.save(alert);

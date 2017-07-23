@@ -1,5 +1,6 @@
 package life.dev.hari.alertChallenge.service;
 
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.model.Alert;
 
 /**
@@ -7,5 +8,5 @@ import life.dev.hari.alertChallenge.model.Alert;
  */
 public interface AlertService {
 
-    Alert postAlert(Alert alert);
+    Alert postAlert(Alert alert) throws IllegalAlertArgumentsException;
 }
