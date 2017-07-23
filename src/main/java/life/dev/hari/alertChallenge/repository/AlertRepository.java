@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 @RestResource(exported = false)
 public interface AlertRepository extends CrudRepository<Alert,Long> {
 
+    Alert findById(Long id);
+    Alert findByReferenceId(String referenceId);
 }
