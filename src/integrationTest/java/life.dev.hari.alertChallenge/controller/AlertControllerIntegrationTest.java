@@ -1,9 +1,12 @@
 package life.dev.hari.alertChallenge.controller;
 
 import life.dev.hari.alertChallenge.WebIntegrationTestBase;
+import life.dev.hari.alertChallenge.repository.AlertRepository;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 
@@ -19,9 +22,17 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
 
     public static final String ALERTS_URL_PATH = "/alerts";
 
+    @Autowired
+    AlertRepository alertRepository;
+
     @Before
     public void setup() throws Exception {
         super.setup();
+    }
+
+    @After
+    public void clearData() {
+        alertRepository.deleteAll();
     }
 
     /**

@@ -29,7 +29,7 @@ public class Alert extends AbstractEntity {
 
     @NotNull
     @Column(name = "delay")
-    public Integer delay = 0;
+    public Integer delay;
 
     @NotNull
     @Column(name = "description")

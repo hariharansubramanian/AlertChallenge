@@ -1,6 +1,8 @@
 package life.dev.hari.alertChallenge.validator;
 
 import life.dev.hari.alertChallenge.builder.AlertBuilder;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.repository.AlertRepository;
 import org.junit.Before;
@@ -29,14 +31,14 @@ public class AlertValidatorTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void validateAlertMustThrowIllegalArgumentExceptionWhenAlertIsNull() {
+    @Test(expected = IllegalAlertArgumentsException.class)
+    public void validateAlertMustThrowIllegalAlertArgumentExceptionWhenAlertIsNull() {
         Alert alert  = null;
         this.alertValidator.validateAlert(alert);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void validateAlertMustThrowIllegalArgumentExceptionWhenAlertDelayIsNull() {
+    @Test(expected = IllegalAlertArgumentsException.class)
+    public void validateAlertMustThrowIllegalAlertArgumentExceptionWhenAlertDelayIsNull() {
 
         Alert alertWithNullDelay  = AlertBuilder.createAlert()
                 .setReferenceId("reference_1")
@@ -48,8 +50,8 @@ public class AlertValidatorTest {
         this.alertValidator.validateAlert(alertWithNullDelay);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void validateAlertMustThrowIllegalArgumentExceptionWhenAlertReferenceIdIsNull() {
+    @Test(expected = IllegalAlertArgumentsException.class)
+    public void validateAlertMustThrowIllegalAlertArgumentExceptionWhenAlertReferenceIdIsNull() {
 
         Alert alertWithNullReferenceId  = AlertBuilder.createAlert()
                 .setReferenceId(null)
@@ -61,8 +63,8 @@ public class AlertValidatorTest {
         this.alertValidator.validateAlert(alertWithNullReferenceId);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void validateAlertMustThrowIllegalArgumentExceptionWhenAlertDescriptionIsNull() {
+    @Test(expected = IllegalAlertArgumentsException.class)
+    public void validateAlertMustThrowIllegalAlertArgumentExceptionWhenAlertDescriptionIsNull() {
 
         Alert alertWithNullDescription  = AlertBuilder.createAlert()
                 .setReferenceId("reference_1")
@@ -74,8 +76,8 @@ public class AlertValidatorTest {
         this.alertValidator.validateAlert(alertWithNullDescription);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void validateAlertMustThrowIllegalArgumentExceptionWhenAlertAlreadyExists() {
+    @Test(expected = DuplicateAlertException.class)
+    public void validateAlertMustThrowIllegalAlertArgumentExceptionWhenAlertAlreadyExists() {
 
         Alert alert  = AlertBuilder.createAlert()
                 .setReferenceId("reference_1")
