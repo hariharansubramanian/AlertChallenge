@@ -26,9 +26,9 @@ import java.security.NoSuchAlgorithmException;
  */
 
 @ControllerAdvice
-public class MyraRestExceptionHandler extends ResponseEntityExceptionHandler {
+public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHandler {
 
-    public MyraRestExceptionHandler() {
+    public MyraRestExceptionHandlingAdviser() {
         super();
     }
 
