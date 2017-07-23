@@ -1,6 +1,7 @@
 package life.dev.hari.alertChallenge.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ public class Alert extends AbstractEntity {
     private Date dateCreated;
 
     @NotNull
+    @JsonProperty(value = "reference_id")
     @Column(name = "reference_id")
     public String referenceId;
 

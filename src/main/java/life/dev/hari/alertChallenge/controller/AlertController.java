@@ -1,10 +1,17 @@
 package life.dev.hari.alertChallenge.controller;
 
 import life.dev.hari.alertChallenge.model.Alert;
+import life.dev.hari.alertChallenge.repository.AlertRepository;
+import life.dev.hari.alertChallenge.service.AlertService;
+import life.dev.hari.alertChallenge.service.ServiceImpl.AlertServiceImpl;
+import life.dev.hari.alertChallenge.validator.AlertValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
 import javax.transaction.Transactional;
+import java.util.Date;
 
 /**
  * Created by plank-hari.s on 7/23/2017.
@@ -13,6 +20,9 @@ import javax.transaction.Transactional;
 @RestController
 @RequestMapping(value = "/alerts")
 public class AlertController {
+
+    @Autowired
+    private AlertService alertService;
 
     /**
      * Posts an alert into the database
@@ -26,14 +36,6 @@ public class AlertController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Alert postAlert(@RequestBody Alert alert) {
-
-        //TODO: Validate alert object sent in the request
-        //TODO: Validate for null contents
-        //TODO: Validate if alert with same id & reference id exists already
-
-        //TODO: Set dateCreated with currentTime
-        //TODO: Insert into database
-        //TODO: Return Json string of the inserted Alert
-        return new Alert();
+        return alertService.postAlert(alert);
     }
 }

@@ -1,7 +1,14 @@
 package life.dev.hari.alertChallenge.service.ServiceImpl;
 
+import life.dev.hari.alertChallenge.model.Alert;
+import life.dev.hari.alertChallenge.repository.AlertRepository;
 import life.dev.hari.alertChallenge.service.AlertService;
+import life.dev.hari.alertChallenge.validator.AlertValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.Date;
 
 /**
  * Created by plank-hari.s on 7/23/2017.
@@ -10,4 +17,18 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AlertServiceImpl implements AlertService {
+
+    @Autowired
+    private AlertValidator alertValidator;
+
+    @Autowired
+    private AlertRepository alertRepository;
+
+    @Override
+    public Alert postAlert(Alert alert) {
+            alertValidator.validateAlert(alert);
+            alert.setDateCreated(new Date());
+            alertRepository.save(alert);
+            return alert;
+    }
 }
