@@ -2,13 +2,16 @@ package life.dev.hari.alertChallenge.controller;
 
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertDeletionException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.service.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 /**
@@ -54,9 +57,9 @@ public class AlertController {
      * Alerts which are still under the delay threshold are NOT deleted from database.
      * @return - Returns 204
      */
-    @RequestMapping(method = RequestMethod.DELETE,value = "/{reference_id}")
+    @RequestMapping(method = RequestMethod.DELETE,value = "/{referenceId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAlert(@PathVariable("reference_id") String referenceId) {
+    public void deleteAlert(@PathVariable("referenceId") String referenceId) throws IllegalAlertDeletionException,EntityNotFoundException {
         alertService.deleteAlert(referenceId);
     }
 }

@@ -28,5 +28,12 @@ public interface AlertService {
      */
     Iterable<Alert> getAlerts();
 
+    /**
+     * Handles all logic related to deleting an alert
+     * Validates for valid reference_id and alert from database
+     * Deletes alert of a provided reference_id
+     * Does not delete alerts which are under delay period
+     * @param referenceId - Reference id of the alert attempting to be deleted.
+     */
     void deleteAlert(String referenceId);
 }

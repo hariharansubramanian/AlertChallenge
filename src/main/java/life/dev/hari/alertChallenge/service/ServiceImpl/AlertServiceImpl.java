@@ -1,7 +1,9 @@
 package life.dev.hari.alertChallenge.service.ServiceImpl;
 
+import javassist.NotFoundException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertDeletionException;
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.repository.AlertRepository;
 import life.dev.hari.alertChallenge.service.AlertService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +33,11 @@ public class AlertServiceImpl implements AlertService {
     private AlertRepository alertRepository;
 
     @Override
-    public Alert postAlert(Alert alert) throws IllegalAlertArgumentsException,DuplicateAlertException{
-            alertValidator.validateAlert(alert);
-            alert.setDateCreated(new Date());
-            alertRepository.save(alert);
-            return alert;
+    public Alert postAlert(Alert alert) throws IllegalAlertArgumentsException, DuplicateAlertException {
+        alertValidator.validateAlert(alert);
+        alert.setDateCreated(new Date());
+        alertRepository.save(alert);
+        return alert;
     }
 
     @Override
@@ -54,8 +57,14 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public void deleteAlert(String referenceId) {
-        //TODO: Using Lambda, extract alerts which have crossed the delay threshold and matches this referenceId.
-        //TODO: Get alert from Database which have crossed delay threshold and has same reference Id
-        //TODO: Handle validation against Null refrence_id and return 400
+        if (referenceId == null) throw new IllegalAlertArgumentsException();
+
+        Alert alertFromDb = alertRepository.findByReferenceId(referenceId);
+        if (alertFromDb == null) throw new EntityNotFoundException();
+
+        if (alertFromDb.getDateCreated().getTime() + TimeUnit.SECONDS.toMillis(alertFromDb.getDelay()) > new Date().getTime()) {
+            throw new IllegalAlertDeletionException();
+        }
+        alertRepository.delete(alertFromDb);
     }
 }

@@ -2,6 +2,7 @@ package life.dev.hari.alertChallenge.controller.myraRestException.exceptionHandl
 
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
+import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertDeletionException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,6 +32,7 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
 
     public static final String ERROR_POST_MISSING_OR_CORRUPTED_DATA = "Error posting an alert with missing or corrupted data";
     public static final String ERROR_POST_DUPLICATE_ALERT_DATA = "Alert with this reference id already exists.";
+    public static final String ERROR_DELETING_ALERT_STILL_UNDER_ITS_DELAY_PERIOD = "Error deleting an alert which is still under its delay period.";
 
     public MyraRestExceptionHandlingAdviser() {
         super();
@@ -49,7 +51,8 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
             KeyStoreException.class,
             IOException.class,
             DuplicateAlertException.class,
-            IllegalAlertArgumentsException.class
+            IllegalAlertArgumentsException.class,
+            IllegalAlertDeletionException.class
     })
 
     public final ResponseEntity<Object> handleMyraRestException(Exception ex, WebRequest request) {
@@ -71,9 +74,14 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
             return handleDuplicateAlertException((DuplicateAlertException) ex,
                     headers, status, request);
 
-        }else if (ex instanceof IllegalAlertArgumentsException) {
+        } else if (ex instanceof IllegalAlertArgumentsException) {
             HttpStatus status = HttpStatus.BAD_REQUEST;
             return handleIllegalAlertArgumentsException((IllegalAlertArgumentsException) ex,
+                    headers, status, request);
+
+        } else if (ex instanceof IllegalAlertDeletionException) {
+            HttpStatus status = HttpStatus.FORBIDDEN;
+            return handleIllegalAlertDeletionException((IllegalAlertDeletionException) ex,
                     headers, status, request);
 
         } else if (ex instanceof EntityNotFoundException) {
@@ -102,8 +110,9 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
         }
     }
 
+
     /**
-     *  Error handlers categorized by Return Code.
+     * Error handlers categorized by Return Code.
      */
     // 400
     private ResponseEntity<Object> handleConstraintViolationException(final ConstraintViolationException ex,
@@ -132,9 +141,10 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
 
     /**
      * Custom Error method which handles duplicate alerts being posted by returning 400 BAD_REQUEST.
+     *
      * @return Custom Response Entitiy Object
-              * Response Error Title: "Alert with this reference id already exists."
-              * Response Error Status code: 400 BAD_REQUEST
+     * Response Error Title: "Alert with this reference id already exists."
+     * Response Error Status code: 400 BAD_REQUEST
      */
     private ResponseEntity<Object> handleDuplicateAlertException(final DuplicateAlertException ex,
                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -148,16 +158,34 @@ public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHan
     /**
      * Custom Error method which handles null or incomplete Alert data from being posted into the system
      * returns 400 BAD_REQUEST.
+     *
      * @return Custom Response Entitiy Object
      * Response Error Title: "Error posting an alert with missing or corrupted data"
      * Response Error Status code: 400 BAD_REQUEST
      */
     private ResponseEntity<Object> handleIllegalAlertArgumentsException(final IllegalAlertArgumentsException ex,
-                                                                 HttpHeaders headers, HttpStatus status, WebRequest request) {
+                                                                        HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorResponse bodyOfResponse = new ErrorResponse()
                 .setErrorTitle(ERROR_POST_MISSING_OR_CORRUPTED_DATA)
                 .setException(ex)
                 .setHttpStatus(400);
+        return handleExceptionInternal(ex, bodyOfResponse, headers, status, request);
+    }
+
+    /**
+     * Custom Error method thrown when trying to delete an alert which is still under delay period
+     * returns 400 BAD_REQUEST.
+     *
+     * @return Custom Response Entitiy Object
+     * Response Error Title: "Error deleting an alert which is still under its delay period."
+     * Response Error Status code: 400 BAD_REQUEST
+     */
+    private ResponseEntity<Object> handleIllegalAlertDeletionException(final IllegalAlertDeletionException ex,
+                                                                       HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorResponse bodyOfResponse = new ErrorResponse()
+                .setErrorTitle(ERROR_DELETING_ALERT_STILL_UNDER_ITS_DELAY_PERIOD)
+                .setException(ex)
+                .setHttpStatus(403);
         return handleExceptionInternal(ex, bodyOfResponse, headers, status, request);
     }
 

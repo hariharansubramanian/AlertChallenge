@@ -197,20 +197,6 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
      */
     @Test
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public void deleteAlertMustReturnBadRequestForNullReferenceIdParam() throws Exception {
-
-        //TODO: Attempt Deleting an alert with null reference id
-        mockHttpServletResponse = this.mockMvc
-                .perform(delete(ALERTS_URL_PATH))
-                .andExpect(status().isNoContent())
-                .andReturn().getResponse();
-
-        //Validation
-        //TODO: Validate response returns 400 Bad Request
-    }
-
-    @Test
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void deleteAlertMustReturnNotFoundForInvalidAlertReferenceId() throws Exception {
         //Create an alert
         Alert validListingAlert = AlertBuilder
@@ -224,14 +210,10 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
         //Save alert into database
         alertRepository.save(validListingAlert);
 
-        //TODO: Attempt Deleting an alert with a different refrence_id
         mockHttpServletResponse = this.mockMvc
-                .perform(delete(ALERTS_URL_PATH))
-                .andExpect(status().isNoContent())
+                .perform(delete(ALERTS_URL_PATH + "/invalid_reference_id"))
+                .andExpect(status().isNotFound())
                 .andReturn().getResponse();
-
-        //Validation
-        //TODO: Validate response returns 404 Not found alert resource
     }
 
     @Test
@@ -243,28 +225,28 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
                 .setDate(new Date())
                 .setDelay(100000)
                 .setDescription("Lazy alert, will take time to process, list this later.")
-                .setReferenceId("reference_id_03").getAlert();
+                .setReferenceId("reference_id_not_compatable_for_deletion").getAlert();
 
         Alert alertNotCrossingDelayThreshold2 = AlertBuilder
                 .createAlert()
                 .setDate(new Date())
                 .setDelay(10000)
                 .setDescription("Lazy alert, will take time to process, list this later.")
-                .setReferenceId("reference_id_04").getAlert();
+                .setReferenceId("reference_id_not_compatable_for_deletion_2").getAlert();
 
         Alert alertNotCrossingDelayThreshold3 = AlertBuilder
                 .createAlert()
                 .setDate(new Date())
                 .setDelay(100000)
                 .setDescription("Lazy alert, will take time to process, list this later.")
-                .setReferenceId("reference_id_05").getAlert();
+                .setReferenceId("reference_id_not_compatable_for_deletion_3").getAlert();
 
         Alert validListingAlert = AlertBuilder
                 .createAlert()
                 .setDelay(0)
                 .setDate(new Date())
                 .setDescription("High priority alert, list this immediately, list this later.")
-                .setReferenceId("reference_id_02")
+                .setReferenceId("reference_id_compatable_for_deletion")
                 .getAlert();
 
         //Save alerts into database
@@ -273,14 +255,31 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
         alertRepository.save(alertNotCrossingDelayThreshold3);
         alertRepository.save(validListingAlert);
 
-        //TODO: Delete inserted alerts
         mockHttpServletResponse = this.mockMvc
-                .perform(delete(ALERTS_URL_PATH))
+                .perform(delete(ALERTS_URL_PATH + "/reference_id_compatable_for_deletion"))
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse();
-        //Validation
-        //TODO: Validate only alerts crossing the delay threshold are deleted
-        //TODO: Validate alerts under the delay period are not deleted
+
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH + "/reference_id_does_not_exist"))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse();
+
+        //TODO: Convert bad request to forbidden
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH + "/reference_id_not_compatable_for_deletion"))
+                .andExpect(status().isForbidden())
+                .andReturn().getResponse();
+
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH + "/reference_id_not_compatable_for_deletion_2"))
+                .andExpect(status().isForbidden())
+                .andReturn().getResponse();
+
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH + "/reference_id_not_compatable_for_deletion_3"))
+                .andExpect(status().isForbidden())
+                .andReturn().getResponse();
     }
 
     /**
