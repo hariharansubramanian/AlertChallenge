@@ -8,9 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 /**
  * Created by plank-hari.s on 7/24/2017.
  * Generic Json Deserializer providing:
@@ -39,8 +36,6 @@ public class JsonDeserializer<T> {
 
         while (jsonParser.nextToken() == JsonToken.START_OBJECT) {
             T t = objectMapper.readValue(jsonParser, typeT);
-            assertThat(String.format("%s object should not be null", t.getClass().getName()),
-                    t, is(notNullValue()));
             objects.add(t);
         }
         return objects;
@@ -54,8 +49,6 @@ public class JsonDeserializer<T> {
 
         if (jsonParser.nextToken() == JsonToken.START_OBJECT) {
             t = objectMapper.readValue(jsonParser, typeT);
-            assertThat(String.format("%s object should not be null", t.getClass().getName()),
-                    t, is(notNullValue()));
             return t;
         }
         return null;
