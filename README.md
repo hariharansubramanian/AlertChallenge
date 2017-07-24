@@ -86,33 +86,38 @@ is a plus
 ### Technologies used:
 
     * Spring framework
-    * Gradle build tool
+    * Gradle
     * Undertow servlet container
     * Postgresql database
 
 My solution was implemented using technologies which promote:
-
 * Portability
-    
     * Rest server runs within the JVM
 * Command line execution
-
-    * Gradle commands to clean, run unit tests, run integration tests, uploadArtifacts, build and run server
+    * To empower automation. Gradle commands to Clean, Run unit & Integration tests, Upload Artifacts, Build and Run server.
 * Verbose configurations and integrations
     * Integrated application.yml file providing Environment based configuration
     * Each environment can have a different configuration for its Logging, Datasources, Server context, Server Port, Security and much more
 * Dependency Injection
-    
     * All components and resources are easily replaced with test-oriented resources
     * Reduced Dependencies and Boilerplate code
 * Scalability & Maintainability
     * Layered architecture
     * Modular, Resuable and Readable Code
     * Stability backed with Unit and Integration test cases
+    * Live Status Monitoring by customizing the Spring actuator
 * Lightweight
     * Undertow is extremely lightweight, at runtime, with a simple embedded server uses less than 4Mb of heap space.
 
 ## Directory Structure
+The source code is broadly broken down into 3 main modules
+
+* integrationTest 
+* main
+* test
+
+Each module has their own independent set of resources
+
 ```
 \---src
     +---integrationTest
@@ -195,7 +200,12 @@ My solution was implemented using technologies which promote:
 
 
 ```
-
+## Source code categories overview:
+* Controller : Responsible for handling requests and responses and invoking services to compute business logic.
+* Service : Contains Service interfaces and implementations which are invoked by the controller.
+* Validator : Responsible for checking conditions, edge cases and validating data entering the system or returned to the user.
+* Repository : Bridge between the Data and the Database.
+* Model : Data layer containing annotated POJO's
 # Features
 
 While creatingthis project, my intention was to create a readily bootstrapped integrated project solution for any future REST API needs.
@@ -205,6 +215,7 @@ Some of the Features and integrations incorporated in this project are:
 * <i><b>Multi-Environment configuration profiles</i></b>:  Dynamic configuration for different enviroments like 'common', 'local', 'dev', 'pre-prod' and 'prod'.
 
 * <i><b>Custom Exception Handling</i></b>: Construct your own response error titles via redirection handlers
+* <i><b>Automatic SQL</i></b>: Auto generate schema and tables from your Java POJO models, and auto update/create/delete data via triggering sql scripts.
 * <i><b>Generic Json Deserializer</i></b>: Deserialize Json Strings into any custom Object or arrays of custom objects.
 * <i><b>Json File Content Reader</i></b>: Convert contents of any json file into a raw byte stream to be sent as a requestBody or responseBody.
 * <i><b>Builder pattern for building objects</i></b>: Easily create and set property values of your custom objects using the Builder classes. Enables chained-setters.
@@ -216,6 +227,43 @@ Some of the Features and integrations incorporated in this project are:
 * <i><b>Future Roadmap</i></b>: Provisions for custom SSL-Stateless-Security, Logging, Database Versioning using Flyway and liquibase, Cloud support, WebSocket Session server for Realtime-updates etc   
 
 
+# API Reference
+
+* POST AN ALERT - Creates an alert
+```
+METHOD: POST
+ENDPOINT: http://localhost:8800/alerts
+CONTENT-TYPE: application/json
+STATUS_CODE: 201
+ERROR_STATUS_CODES: 400
+REQUEST_BODY: Alert Model
+
+sample request body json:
+{
+  "reference_id": "reference_1",
+  "delay": 30,
+  "description": "Transcription not yet started!"
+}
+
+
+```
+
+* GET ALL ALERTS - Returns a list of alerts from the database.
+                    Alerts within their delay period will not be listed.
+```
+METHOD: GET
+ENDPOINT: http://localhost:8800/alerts
+STATUS_CODE: 200
+```
+
+* DELETE AN ALERT - Deletes a specific alert by providing its reference id.
+Alerts which are still within their delay period are not deleted.
+```
+METHOD: DELETE
+ENDPOINT: http://localhost:8000/{reference_id}
+STATUS_CODE: 204
+ERROR_STATUS_CODES: 404,400,403
+```
 # Installation
 
 #### Pre-requisites
@@ -226,7 +274,7 @@ Some of the Features and integrations incorporated in this project are:
 #### Database setup
 
    Using PgAdmin3 follow the screenshots posted in the link below:
-  <blockquote class="imgur-embed-pub" lang="en" data-id="a/G08mq"><a href="//imgur.com/G08mq">PostgreSQL DB Setup</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+   <blockquote class="imgur-embed-pub" lang="en" data-id="a/05xa6"><a href="http://imgur.com/a/05xa6">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 
   Note the following property values: 
   * Postgres Server Hostname - default is 'localhost'
@@ -334,7 +382,13 @@ Method:GET
 Endpoint: http://localhost:8800/metrics
 ```
 
+# Contribution
 
-# API Reference
+If you are interested in contributing to this project, You can contact me on
 
+Email: hariharan1990.s@gmail.com
+
+or 
+
+Skype: hari.s.i
 
