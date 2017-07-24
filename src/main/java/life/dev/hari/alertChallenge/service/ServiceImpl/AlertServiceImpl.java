@@ -51,4 +51,11 @@ public class AlertServiceImpl implements AlertService {
 
         return alertsCrossingDelayThreshold;
     }
+
+    @Override
+    public void deleteAlert(String referenceId) {
+        //TODO: Using Lambda, extract alerts which have crossed the delay threshold and matches this referenceId.
+        //TODO: Get alert from Database which have crossed delay threshold and has same reference Id
+        //TODO: Handle validation against Null refrence_id and return 400
+    }
 }

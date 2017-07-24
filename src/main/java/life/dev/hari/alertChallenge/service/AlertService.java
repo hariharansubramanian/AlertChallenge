@@ -27,4 +27,6 @@ public interface AlertService {
      * @return
      */
     Iterable<Alert> getAlerts();
+
+    void deleteAlert(String referenceId);
 }

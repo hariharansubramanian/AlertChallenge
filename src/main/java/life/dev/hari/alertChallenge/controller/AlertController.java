@@ -48,4 +48,15 @@ public class AlertController {
     public Iterable<Alert> getAlerts() {
         return alertService.getAlerts();
     }
+
+    /**
+     * Deletes an alert of a particular reference_id from the database
+     * Alerts which are still under the delay threshold are NOT deleted from database.
+     * @return - Returns 204
+     */
+    @RequestMapping(method = RequestMethod.DELETE,value = "/{reference_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAlert(@PathVariable("reference_id") String referenceId) {
+        alertService.deleteAlert(referenceId);
+    }
 }
