@@ -35,10 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
 
-    public static final String ALERTS_URL_PATH = "/alerts";
-    Logger logger = LoggerFactory.getLogger(AlertControllerIntegrationTest.class);
+    private static final String ALERTS_URL_PATH = "/alerts";
+    private Logger logger = LoggerFactory.getLogger(AlertControllerIntegrationTest.class);
 
     @Autowired
+    private
     AlertRepository alertRepository;
 
     @Before
@@ -281,10 +282,6 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
                 .andExpect(status().isForbidden())
                 .andReturn().getResponse();
     }
-
-    /**
-     * Utility Methods
-     */
 
     /**
      * Utility method to convert Json file contents into bytes

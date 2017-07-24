@@ -1,6 +1,5 @@
 package life.dev.hari.alertChallenge.service.ServiceImpl;
 
-import javassist.NotFoundException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.DuplicateAlertException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertArgumentsException;
 import life.dev.hari.alertChallenge.controller.myraRestException.customExceptions.IllegalAlertDeletionException;
@@ -10,7 +9,6 @@ import life.dev.hari.alertChallenge.service.AlertService;
 import life.dev.hari.alertChallenge.validator.AlertValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
@@ -47,12 +45,11 @@ public class AlertServiceImpl implements AlertService {
 
         long currentTime = new Date().getTime();
         //Using Lambda, extract alerts which have crossed the delay threshold.
-        List<Alert> alertsCrossingDelayThreshold = alertsFromDb
+
+        return alertsFromDb
                 .stream()
                 .filter(a -> currentTime > (a.getDateCreated().getTime() + TimeUnit.SECONDS.toMillis(a.getDelay())))
                 .collect(Collectors.toList());
-
-        return alertsCrossingDelayThreshold;
     }
 
     @Override

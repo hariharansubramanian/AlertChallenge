@@ -15,9 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AlertValidator {
 
-    public static final String INVALID_ALERT_POSTED = "Invalid Alert posted.";
-    public static final String ALERT_ALREADY_EXISTS_IN_DATABASE = "Alert already exists in database.";
+    private static final String INVALID_ALERT_POSTED = "Invalid Alert posted.";
+    private static final String ALERT_ALREADY_EXISTS_IN_DATABASE = "Alert already exists in database.";
     @Autowired
+    private
     AlertRepository alertRepository;
 
     public void validateAlert(Alert alert) throws IllegalAlertArgumentsException,DuplicateAlertException {

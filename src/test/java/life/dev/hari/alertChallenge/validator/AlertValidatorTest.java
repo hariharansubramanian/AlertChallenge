@@ -85,8 +85,7 @@ public class AlertValidatorTest {
                 .setDate(new Date())
                 .setDelay(30)
                 .getAlert();
-        Alert alertFromDb = alert;
-        when(alertRepository.findByReferenceId(alert.getReferenceId())).thenReturn(alertFromDb);
+        when(alertRepository.findByReferenceId(alert.getReferenceId())).thenReturn(alert);
         this.alertValidator.validateAlert(alert);
     }
 }

@@ -30,9 +30,9 @@ import java.security.NoSuchAlgorithmException;
 @ControllerAdvice
 public class MyraRestExceptionHandlingAdviser extends ResponseEntityExceptionHandler {
 
-    public static final String ERROR_POST_MISSING_OR_CORRUPTED_DATA = "Error posting an alert with missing or corrupted data";
-    public static final String ERROR_POST_DUPLICATE_ALERT_DATA = "Alert with this reference id already exists.";
-    public static final String ERROR_DELETING_ALERT_STILL_UNDER_ITS_DELAY_PERIOD = "Error deleting an alert which is still under its delay period.";
+    private static final String ERROR_POST_MISSING_OR_CORRUPTED_DATA = "Error posting an alert with missing or corrupted data";
+    private static final String ERROR_POST_DUPLICATE_ALERT_DATA = "Alert with this reference id already exists.";
+    private static final String ERROR_DELETING_ALERT_STILL_UNDER_ITS_DELAY_PERIOD = "Error deleting an alert which is still under its delay period.";
 
     public MyraRestExceptionHandlingAdviser() {
         super();

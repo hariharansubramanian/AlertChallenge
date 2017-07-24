@@ -22,6 +22,7 @@ import java.util.List;
 public class AlertRepositoryIntegrationTest extends WebIntegrationTestBase {
 
     @Autowired
+    private
     AlertRepository alertRepository;
 
     @After

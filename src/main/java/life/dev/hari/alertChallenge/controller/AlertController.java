@@ -6,7 +6,6 @@ import life.dev.hari.alertChallenge.controller.myraRestException.customException
 import life.dev.hari.alertChallenge.model.Alert;
 import life.dev.hari.alertChallenge.service.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,7 @@ public class AlertController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public Alert postAlert(@RequestBody Alert alert) throws IllegalAlertArgumentsException, DuplicateAlertException, IllegalAlertArgumentsException {
+    public Alert postAlert(@RequestBody Alert alert) throws DuplicateAlertException, IllegalAlertArgumentsException {
         return alertService.postAlert(alert);
     }
 
@@ -55,7 +54,7 @@ public class AlertController {
     /**
      * Deletes an alert of a particular reference_id from the database
      * Alerts which are still under the delay threshold are NOT deleted from database.
-     * @return - Returns 204
+     * Returns 204
      */
     @RequestMapping(method = RequestMethod.DELETE,value = "/{referenceId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

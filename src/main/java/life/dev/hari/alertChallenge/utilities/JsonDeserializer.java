@@ -13,6 +13,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 /**
  * Created by plank-hari.s on 7/24/2017.
+ * Generic Json Deserializer providing:
+ * getObject(): Conversion of json string to custom object
+ * getObjectList(): Conversion of json string to an array of custom objects
  */
 public class JsonDeserializer<T> {
     private final JsonFactory jsonFactory;

@@ -25,11 +25,11 @@ public class Alert extends AbstractEntity {
     @NotNull
     @JsonProperty(value = "reference_id")
     @Column(name = "reference_id")
-    public String referenceId;
+    private String referenceId;
 
     @NotNull
     @Column(name = "delay")
-    public Integer delay;
+    private Integer delay;
 
     @NotNull
     @Column(name = "description")

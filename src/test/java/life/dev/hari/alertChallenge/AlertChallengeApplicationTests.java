@@ -1,4 +1,4 @@
 package life.dev.hari.alertChallenge;
 
-public class AlertChallengeApplicationTests {
+class AlertChallengeApplicationTests {
 }

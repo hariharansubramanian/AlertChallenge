@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 public abstract class WebIntegrationTestBase {
 
     @Autowired
-    protected WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
     protected MockMvc mockMvc;
     protected ObjectMapper objectMapper;
     protected JsonFactory jsonFactory;
