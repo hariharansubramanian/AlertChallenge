@@ -1,0 +1,151 @@
+spring:
+  profiles:
+    active: common,local
+  default: common,local # default to profiles "common" and "local" when no other profiles are set.
+---
+#Properties for the "common" profile, which will contain properties common to all profiles
+spring:
+  profiles: common
+
+server:
+  contextPath: /
+  port: 8800
+
+#Global CORS settings
+endpoints.cors:
+  allow-credentials: true
+  allowed-origins: '*'
+  allowed-methods: GET, POST, PUT, DELETE, OPTIONS
+  allowed-headers: Origin, X-Requested-With, Content-Type, Accept
+  exposed-headers: Access-Control-Allow-Origin
+  max-age: 1800
+
+endpoints.shutdown:
+  enabled: true
+---
+#Properties for the "local" profile, to be used by developers on their laptop
+spring:
+  profiles: local
+  jpa:
+    database-platform:  org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    driverClassName: org.postgresql.Driver
+    username: alertsadmin                            # insert correct username here
+    password: password                             # insert correct password here
+    url: jdbc:postgresql://127.0.0.1:5432/alertdb # database server IP and port numbers to be changed
+
+#Logging settings
+logging:
+  path: /var/log/alerts
+  file: alerts.log
+  level:
+    org.springframework: DEBUG
+    org.hibernate: WARNING
+    life.dev.hari.alertChallenge: DEBUG
+    b.c.e.u.UndertowEmbeddedServletContainer: INFO
+
+
+---
+#Properties for the "dev" profile, to be used int he integration environment
+spring:
+  profiles: dev
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    datasource:
+      driverClassName: org.postgresql.Driver
+      username: alertsadmin                             # insert correct username here
+      password: password                             # insert correct password here
+      url: jdbc:postgresql://127.0.0.1:5432/alertdb # database server IP and port numbers to be changed
+
+#Logging settings
+logging:
+  path: /var/log/alerts
+  file: alerts.log
+  level:
+    org.springframework: DEBUG
+    org.hibernate: WARNING
+    life.dev.hari.alertChallenge: DEBUG
+    b.c.e.u.UndertowEmbeddedServletContainer: INFO
+
+---
+#Properties for the "test" profile, to be used by QA to execute automated functional tests.
+spring:
+  profiles: test
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    datasource:
+      driverClassName: org.postgresql.Driver
+      username: alertsadmin                             # insert correct username here
+      password: password                             # insert correct password here
+      url: jdbc:postgresql://127.0.0.1:5432/alertdb # database server IP and port numbers to be changed
+
+#Logging settings
+logging:
+  path: /var/log/alerts
+  file: alerts.log
+  level:
+    org.springframework: DEBUG
+    org.hibernate: WARNING
+    life.dev.hari.alertChallenge: DEBUG
+    b.c.e.u.UndertowEmbeddedServletContainer: INFO
+
+---
+#Properties for the "preprod" profile, which mirrors the production environment and will
+#help us debug issues that happen in production by replicating them in preprod.
+spring:
+  profiles: preprod
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driverClassName: org.postgresql.Driver
+    username: alertsadmin                             # insert correct username here
+    password: password                             # insert correct password here
+    url: jdbc:postgresql://127.0.0.1:5432/alertdb # database server IP and port numbers to be changed
+
+logging:
+  path: /var/log/alerts
+  file: alerts.log
+  level:
+    org.springframework: DEBUG
+    org.hibernate: WARNING
+    life.dev.hari.alertChallenge: DEBUG
+    b.c.e.u.UndertowEmbeddedServletContainer: INFO
+
+
+---
+#Properties for the "prod" profile. THIS WILL BE REMOVED FROM SOURCE CONTROL.
+#RETAINING IT ONLY IN THIS BRANCH probably.
+spring:
+  profiles: prod
+  jpa:
+    database-platform:  org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driverClassName: org.postgresql.Driver
+    username: alertsadmin                             # insert correct username here
+    password: password                             # insert correct password here
+    url: jdbc:postgresql://127.0.0.1:5432/alertdb # database server IP and port numbers to be changed
+
+logging:
+  path: /var/log/alerts
+  file: alerts.log
+  level:
+    org.springframework: INFO
+    org.hibernate: INFO
+    life.dev.hari.alertChallenge: INFO
+    b.c.e.u.UndertowEmbeddedServletContainer: INFO
+...
