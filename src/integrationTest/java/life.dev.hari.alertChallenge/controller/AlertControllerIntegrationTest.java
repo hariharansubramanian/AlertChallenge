@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -191,9 +192,104 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
         Assert.isTrue(alerts.contains(validListingAlert));
     }
 
+    /**
+     * DELETE /alert/{referenceId}
+     */
+    @Test
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void deleteAlertMustReturnBadRequestForNullReferenceIdParam() throws Exception {
+
+        //TODO: Attempt Deleting an alert with null reference id
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse();
+
+        //Validation
+        //TODO: Validate response returns 400 Bad Request
+    }
+
+    @Test
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void deleteAlertMustReturnNotFoundForInvalidAlertReferenceId() throws Exception {
+        //Create an alert
+        Alert validListingAlert = AlertBuilder
+                .createAlert()
+                .setDelay(0)
+                .setDate(new Date())
+                .setDescription("High priority alert, list this immediately, list this later.")
+                .setReferenceId("reference_id_02")
+                .getAlert();
+
+        //Save alert into database
+        alertRepository.save(validListingAlert);
+
+        //TODO: Attempt Deleting an alert with a different refrence_id
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse();
+
+        //Validation
+        //TODO: Validate response returns 404 Not found alert resource
+    }
+
+    @Test
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void deleteAlertMustDeleteAlertIfUnderDelayPeriod() throws Exception {
+        //Create alerts with different delay periods.
+        Alert alertNotCrossingDelayThreshold = AlertBuilder
+                .createAlert()
+                .setDate(new Date())
+                .setDelay(100000)
+                .setDescription("Lazy alert, will take time to process, list this later.")
+                .setReferenceId("reference_id_03").getAlert();
+
+        Alert alertNotCrossingDelayThreshold2 = AlertBuilder
+                .createAlert()
+                .setDate(new Date())
+                .setDelay(10000)
+                .setDescription("Lazy alert, will take time to process, list this later.")
+                .setReferenceId("reference_id_04").getAlert();
+
+        Alert alertNotCrossingDelayThreshold3 = AlertBuilder
+                .createAlert()
+                .setDate(new Date())
+                .setDelay(100000)
+                .setDescription("Lazy alert, will take time to process, list this later.")
+                .setReferenceId("reference_id_05").getAlert();
+
+        Alert validListingAlert = AlertBuilder
+                .createAlert()
+                .setDelay(0)
+                .setDate(new Date())
+                .setDescription("High priority alert, list this immediately, list this later.")
+                .setReferenceId("reference_id_02")
+                .getAlert();
+
+        //Save alerts into database
+        alertRepository.save(alertNotCrossingDelayThreshold);
+        alertRepository.save(alertNotCrossingDelayThreshold2);
+        alertRepository.save(alertNotCrossingDelayThreshold3);
+        alertRepository.save(validListingAlert);
+
+        //TODO: Delete inserted alerts
+        mockHttpServletResponse = this.mockMvc
+                .perform(delete(ALERTS_URL_PATH))
+                .andExpect(status().isNoContent())
+                .andReturn().getResponse();
+        //Validation
+        //TODO: Validate only alerts crossing the delay threshold are deleted
+        //TODO: Validate alerts under the delay period are not deleted
+    }
+
+    /**
+     * Utility Methods
+     */
 
     /**
      * Utility method to convert Json file contents into bytes
+     *
      * @param filePath - Json file path to be used in test case
      * @return - Byte stream of json raw body
      * @throws IOException
@@ -206,6 +302,7 @@ public class AlertControllerIntegrationTest extends WebIntegrationTestBase {
     /**
      * Utility method to Convert response stream into an array of custom objects
      * In this case converting response body to an array of Alert Objects
+     *
      * @param responseJson - Response body contents as string
      * @return - Array of Alert Objects
      * @throws IOException
